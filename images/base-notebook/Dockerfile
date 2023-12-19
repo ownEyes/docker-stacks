@@ -1,11 +1,12 @@
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
-ARG REGISTRY=quay.io
-ARG OWNER=jupyter
-ARG BASE_CONTAINER=$REGISTRY/$OWNER/docker-stacks-foundation
+ARG REGISTRY=docker.io
+ARG OWNER=yifengdev
+ARG BASE_IMAGE=base-conda
+ARG BASE_CONTAINER=$REGISTRY/$OWNER/$BASE_IMAGE
 FROM $BASE_CONTAINER
 
-LABEL maintainer="Jupyter Project <jupyter@googlegroups.com>"
+LABEL maintainer="Liu <932048437@qq.com>"
 
 # Fix: https://github.com/hadolint/hadolint/wiki/DL4006
 # Fix: https://github.com/koalaman/shellcheck/wiki/SC3014
@@ -36,15 +37,18 @@ USER ${NB_UID}
 # Do all this in a single RUN command to avoid duplicating all of the
 # files across image layers when the permissions change
 WORKDIR /tmp
-RUN mamba install --yes \
-    'jupyterlab' \
-    'notebook' \
-    'jupyterhub' \
-    'nbclassic' && \
-    jupyter server --generate-config && \
-    mamba clean --all -f -y && \
-    npm cache clean --force && \
-    jupyter lab clean && \
+RUN conda create -n keras-tf && \
+    conda run -n keras-tf conda install -y \
+    jupyter_core \
+    jupyterlab \
+    notebook \
+    jupyterhub \
+    nbclassic && \
+    conda run -n keras-tf jupyter server --generate-config && \
+    conda run -n keras-tf conda clean --all -f -y && \
+    conda run -n keras-tf npm cache clean --force && \
+    conda run -n keras-tf jupyter lab clean && \
+    conda create --name keras-torch --clone keras-tf && \
     rm -rf "/home/${NB_USER}/.cache/yarn" && \
     fix-permissions "${CONDA_DIR}" && \
     fix-permissions "/home/${NB_USER}"
