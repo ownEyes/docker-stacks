@@ -48,7 +48,7 @@ RUN conda create -n keras-tf && \
     conda run -n keras-tf conda clean --all -f -y && \
     conda run -n keras-tf npm cache clean --force && \
     conda run -n keras-tf jupyter lab clean && \
-    conda create --name keras-torch --clone keras-tf && \
+    # conda create --name keras-torch --clone keras-tf && \
     rm -rf "/home/${NB_USER}/.cache/yarn" && \
     fix-permissions "${CONDA_DIR}" && \
     fix-permissions "/home/${NB_USER}"

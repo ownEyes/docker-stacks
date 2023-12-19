@@ -1,11 +1,18 @@
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
-ARG REGISTRY=quay.io
-ARG OWNER=jupyter
-ARG BASE_CONTAINER=$REGISTRY/$OWNER/base-notebook
+ARG REGISTRY=docker.io
+ARG OWNER=yifengdev
+ARG BASE_IMAGE=base-jupyter
+ARG BASE_CONTAINER=$REGISTRY/$OWNER/$BASE_IMAGE
 FROM $BASE_CONTAINER
 
-LABEL maintainer="Jupyter Project <jupyter@googlegroups.com>"
+LABEL maintainer="Liu <932048437@qq.com>"
+# ARG REGISTRY=quay.io
+# ARG OWNER=jupyter
+# ARG BASE_CONTAINER=$REGISTRY/$OWNER/base-notebook
+# FROM $BASE_CONTAINER
+
+# LABEL maintainer="Jupyter Project <jupyter@googlegroups.com>"
 
 # Fix: https://github.com/hadolint/hadolint/wiki/DL4006
 # Fix: https://github.com/koalaman/shellcheck/wiki/SC3014
