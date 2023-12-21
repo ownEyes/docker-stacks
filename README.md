@@ -8,6 +8,7 @@
 [![Binder badge](https://static.mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/jupyter/docker-stacks/main?urlpath=lab/tree/README.ipynb "Launch a quay.io/jupyter/base-notebook container on mybinder.org")
 
 **🔷Some images in this repo are modified by [ownEyes](https://github.com/ownEyes) to use Conda instead of mamba, all packages are installed to a new environment instead of the base env. The purpose of such changes is for the installation of Kears3 with different backend support.**
+**🔷Conda envs now have been restructured.**
 
 Jupyter Docker Stacks are a set of ready-to-run [Docker images](https://quay.io/organization/jupyter) containing Jupyter applications and interactive computing tools.
 You can use a stack image to do any of the following (and more):

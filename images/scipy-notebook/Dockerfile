@@ -33,7 +33,10 @@ RUN apt-get update --yes && \
 USER ${NB_UID}
 
 # Install Python 3 packages
-RUN conda run -n keras-tf conda install --yes \
+RUN conda create -n ml-util && \
+    # conda run -n jupyter conda install -y \
+    source /opt/conda/bin/activate ml-util && \
+    conda install -y \
     altair \
     beautifulsoup4 \
     bokeh \
@@ -44,6 +47,7 @@ RUN conda run -n keras-tf conda install --yes \
     dask \
     dill \
     h5py \
+    ipykernel \
     ipympl \
     ipywidgets \
     jupyterlab-git \
@@ -64,14 +68,18 @@ RUN conda run -n keras-tf conda install --yes \
     sympy \
     widgetsnbextension \
     xlrd && \
-    conda run -n keras-tf conda clean --all -f -y && \
+    conda clean --all -f -y && \
+    MPLBACKEND=Agg python -c "import matplotlib.pyplot" && \
+    python -m ipykernel install --user --name=ml-util --display-name="Python (ML-util)" && \
+    mv "${HOME}/.local/share/jupyter/kernels/ml-util"* "${CONDA_DIR}/envs/jupyter/share/jupyter/kernels/" && \
+    rm -rf "${HOME}/.local" &&\
     fix-permissions "${CONDA_DIR}" && \
     fix-permissions "/home/${NB_USER}"
 
 # Install facets package which does not have a `pip` or `conda-forge` package at the moment
 WORKDIR /tmp
 RUN git clone https://github.com/PAIR-code/facets && \
-    conda run -n keras-tf jupyter nbclassic-extension install facets/facets-dist/ --sys-prefix && \
+    conda run -n jupyter jupyter nbclassic-extension install facets/facets-dist/ --sys-prefix && \
     rm -rf /tmp/facets && \
     # conda env remove --name keras-torch && \
     # conda create --name keras-torch --clone keras-tf && \
@@ -79,8 +87,8 @@ RUN git clone https://github.com/PAIR-code/facets && \
     fix-permissions "/home/${NB_USER}"
 
 # Import matplotlib the first time to build the font cache
-RUN conda run -n keras-tf MPLBACKEND=Agg python -c "import matplotlib.pyplot" && \
-    fix-permissions "/home/${NB_USER}"
+# RUN conda run -n keras-tf MPLBACKEND=Agg python -c "import matplotlib.pyplot" && \
+#     fix-permissions "/home/${NB_USER}"
 
 USER ${NB_UID}
 
