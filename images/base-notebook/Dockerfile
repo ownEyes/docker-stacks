@@ -26,7 +26,9 @@ RUN apt-get update --yes && \
     #   than one unique  instance  of  some  command with a unique set of arguments,
     #   we use `run-one-constantly` to support the `RESTARTABLE` option
     run-one && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
+    apt-get clean && rm -rf /var/lib/apt/lists/* && \
+    sed -i '/^# Execute the command!/i \
+    if [[ "${cmd[0]}" == "jupyter" ]]; then\n    source /opt/conda/bin/activate jupyter\nfi\n' /usr/local/bin/start.sh 
 
 USER ${NB_UID}
 
@@ -37,17 +39,23 @@ USER ${NB_UID}
 # Do all this in a single RUN command to avoid duplicating all of the
 # files across image layers when the permissions change
 WORKDIR /tmp
-RUN conda create -n keras-tf && \
-    conda run -n keras-tf conda install -y \
+RUN conda create -n jupyter && \
+    # conda run -n jupyter conda install -y \
+    source /opt/conda/bin/activate jupyter && \
+    conda install -y \
     jupyter_core \
     jupyterlab \
     notebook \
     jupyterhub \
     nbclassic && \
-    conda run -n keras-tf jupyter server --generate-config && \
-    conda run -n keras-tf conda clean --all -f -y && \
-    conda run -n keras-tf npm cache clean --force && \
-    conda run -n keras-tf jupyter lab clean && \
+    # conda run -n jupyter jupyter server --generate-config && \
+    # conda run -n jupyter conda clean --all -f -y && \
+    # conda run -n jupyter npm cache clean --force && \
+    # conda run -n jupyter jupyter lab clean && \
+    jupyter server --generate-config && \
+    conda clean --all -f -y && \
+    npm cache clean --force && \
+    jupyter lab clean && \
     # conda create --name keras-torch --clone keras-tf && \
     rm -rf "/home/${NB_USER}/.cache/yarn" && \
     fix-permissions "${CONDA_DIR}" && \
